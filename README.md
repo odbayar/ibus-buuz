@@ -1,0 +1,124 @@
+# Buuz IBus IME
+
+Buuz is an Input Method Engine (IME) for IBus that enables you to write in Mongolian Cyrillic using a Latin-based keyboard. For example, if you write "buuz id'ye", it will come out as "бууз идье".
+
+This is a port of the [Buuz Windows IME](https://github.com/odbayar/buuz) to the Linux IBus framework.
+
+## Requirements
+
+- Linux with IBus framework
+- Python 3.6 or higher
+- IBus 1.5 or higher
+- PyGObject (Python GObject Introspection)
+- ImageMagick (for icon conversion during installation)
+
+## Installation
+
+### Installing Dependencies
+
+On Ubuntu/Debian systems:
+
+```bash
+sudo apt-get update
+sudo apt-get install python3 python3-pip python3-setuptools python3-gi gir1.2-ibus-1.0 ibus imagemagick
+```
+
+On Fedora/RHEL systems:
+
+```bash
+sudo dnf install python3 python3-pip python3-setuptools python3-gobject ibus ibus-devel imagemagick
+```
+
+### Installing Buuz IBus IME
+
+1. Clone this repository:
+
+```bash
+git clone https://github.com/jetbrains/buuz-ibus.git
+cd buuz-ibus
+```
+
+2. Install the IME:
+
+```bash
+sudo python3 setup.py install
+```
+
+3. Restart IBus (if not already done by the installer):
+
+```bash
+ibus restart
+```
+
+4. Enable the IME in IBus preferences:
+   - Open IBus Preferences (from system settings or run `ibus-setup`)
+   - Go to the "Input Method" tab
+   - Click "Add" and select "Mongolian" from the language list
+   - Select "Buuz" from the available input methods
+   - Click "Add"
+
+## Usage
+
+Once installed and enabled, you can switch to the Buuz input method using your IBus keyboard shortcut (typically Super+Space or Ctrl+Space).
+
+When the Buuz IME is active, you can type Latin characters and they will be automatically converted to Mongolian Cyrillic. The conversion follows the same rules as the original Buuz Windows IME.
+
+### Basic Conversion Rules
+
+| Latin | Cyrillic |
+|-------|----------|
+| a     | а        |
+| b     | б        |
+| v     | в        |
+| g     | г        |
+| d     | д        |
+| ye    | е        |
+| yo    | ё        |
+| j     | ж        |
+| z     | з        |
+| i     | и        |
+| i     | й        |
+| k     | к        |
+| l     | л        |
+| m     | м        |
+| n     | н        |
+| o     | о        |
+| o'    | ө        |
+| p     | п        |
+| r     | р        |
+| s     | с        |
+| t     | т        |
+| u     | у        |
+| u'    | ү        |
+| f     | ф        |
+| h     | х        |
+| c     | ц        |
+| ch    | ч        |
+| sh    | ш        |
+| sxc   | щ        |
+| "     | ъ        |
+| y     | ы        |
+| '     | ь        |
+| e     | э        |
+| yu    | ю        |
+| ya    | я        |
+
+## Troubleshooting
+
+If the IME doesn't appear in the IBus preferences:
+- Make sure IBus is running (`ibus-daemon -drx`)
+- Check if the component file was correctly installed (`ls /usr/local/share/ibus/component/buuz.xml`)
+- Try restarting IBus again (`ibus restart`)
+
+If the IME doesn't work correctly:
+- Check the system logs for any error messages
+- Make sure all dependencies are installed
+- Try restarting your session
+
+## License
+
+This project is licensed under the Apache License 2.0 - see the LICENSE file for details.
+
+## Acknowledgments
+
+- The IBus team for the IBus framework
