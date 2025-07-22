@@ -61,9 +61,8 @@ class CustomInstall:
         os.chmod(os.path.join(LIB_DIR, 'ibus-buuz.py'), 0o755)
         
         # Copy icon
-        if os.path.exists('icons/buuz.png'):
-            shutil.copy2('icons/buuz.png', os.path.join(ICON_DIR, 'buuz.png'))
-            print(f"Copied icons/buuz.png to {ICON_DIR}/buuz.png")
+        shutil.copy2('icons/buuz.png', os.path.join(ICON_DIR, 'buuz.png'))
+        print(f"Copied icons/buuz.png to {ICON_DIR}/buuz.png")
         
         # Copy component file
         shutil.copy2('buuz.xml', os.path.join(IBUS_COMPONENT_DIR, 'buuz.xml'))
