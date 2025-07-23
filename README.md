@@ -10,7 +10,6 @@ This is a port of the [Buuz Windows IME](https://github.com/odbayar/buuz) to the
 - Python 3.6 or higher
 - IBus 1.5 or higher
 - PyGObject (Python GObject Introspection)
-- ImageMagick (for icon conversion during installation)
 
 ## Installation
 
@@ -20,13 +19,13 @@ On Ubuntu/Debian systems:
 
 ```bash
 sudo apt-get update
-sudo apt-get install python3 python3-pip python3-setuptools python3-gi gir1.2-ibus-1.0 ibus imagemagick
+sudo apt-get install python3 python3-pip python3-setuptools python3-gi gir1.2-ibus-1.0 ibus
 ```
 
 On Fedora/RHEL systems:
 
 ```bash
-sudo dnf install python3 python3-pip python3-setuptools python3-gobject ibus ibus-devel imagemagick
+sudo dnf install python3 python3-pip python3-setuptools python3-gobject ibus ibus-devel
 ```
 
 ### Installing Buuz IBus IME
