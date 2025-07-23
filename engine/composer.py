@@ -40,14 +40,15 @@ class Composer:
     """
     def __init__(self):
         self.rules = []
-        self.rule_lengths = set()
+        self.rule_lengths = []
         
         # Initialize conversion rules
         self._init_rules()
-        
-        # Sort rules by length (longest first) for proper matching
-        self.rule_lengths = sorted(self.rule_lengths, reverse=True)
-        
+
+        # Compute and store rule lengths in descending order to ensure longer matches 
+        # are attempted first during conversion (e.g. 'SH' should match before 'S')
+        self._compute_rule_lengths()
+
     def _init_rules(self):
         """Initialize the conversion rules"""
         # Add rules from the Windows IME
@@ -149,23 +150,93 @@ class Composer:
             to_str: The target string (Cyrillic)
             flags: Rule flags
         """
-        # Add the rule to the rules list
-        rule = ConversionRule(from_str, to_str, flags)
-        self.rules.append(rule)
-        
-        # Add the length to the set of rule lengths
-        self.rule_lengths.add(len(from_str))
-        
-        # If the rule allows case conversion, add case variants
+        # If the rule allows case conversion, handle all case variants
         if flags & X_AC:
-            # Add uppercase variant
-            if from_str.lower() != from_str:
-                self._add_rule(from_str.lower(), to_str.lower(), flags)
-            
-            # Add lowercase variant
-            if from_str.upper() != from_str:
-                self._add_rule(from_str.upper(), to_str.upper(), flags)
-    
+            # Map alphabetic characters in 'from' to positions in 'to'
+            char_pos_map = []
+            to_pos = 0
+            for i in range(len(from_str)):
+                if from_str[i].isalpha() and to_pos < len(to_str):
+                    char_pos_map.append(to_pos)
+                    to_pos += 1
+                else:
+                    char_pos_map.append(-1)
+
+            # Generate all possible case variants using recursion
+            def generate_case_variants(pos, to_pos, current_from, current_to):
+                if pos >= len(from_str):
+                    # We've processed all characters, add the rule
+                    self.rules.append(ConversionRule(current_from, current_to, flags))
+                    return
+
+                if from_str[pos].isalpha():
+                    # For alphabetic characters, try both uppercase and lowercase
+                    # 1. Uppercase variant
+                    new_from = current_from + from_str[pos].upper()
+                    new_to = current_to + to_str[to_pos].upper() if to_pos < len(to_str) else current_to
+
+                    generate_case_variants(pos + 1, to_pos + 1, new_from, new_to)
+
+                    # 2. Lowercase variant
+                    new_from = current_from + from_str[pos].lower()
+                    new_to = current_to + to_str[to_pos].lower() if to_pos < len(to_str) else current_to
+
+                    generate_case_variants(pos + 1, to_pos + 1, new_from, new_to)
+                else:
+                    # For non-alphabetic characters, just add them as is
+                    generate_case_variants(pos + 1, to_pos, current_from + from_str[pos], current_to)
+
+            # Start generating case variants
+            # Note: We don't add the original rule here as it will be handled by the recursive function
+            generate_case_variants(0, 0, "", "")
+        else:
+            self.rules.append(ConversionRule(from_str, to_str, flags))
+
+    def _compute_rule_lengths(self):
+        """
+        Computes the unique lengths of `from_str` attributes in rules and updates
+        the sorted list in descending order.
+        """
+        lengths = set()
+        for rule in self.rules:
+            lengths.add(len(rule.from_str))
+        self.rule_lengths = sorted(lengths, reverse=True)
+
+    def dump_rules(self, filename):
+        """
+        Dump the current conversion rules to a file for debugging purposes
+
+        Args:
+            filename: The path to the file where rules should be saved
+        """
+        try:
+            with open(filename, 'w', encoding='utf-8') as f:
+                # Write header
+                f.write("# Mongolian Cyrillic IME Conversion Rules\n")
+                import datetime
+                f.write("# Generated: {}\n\n".format(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+                f.write("{:<20} {:<10} {:<10}\n".format("From", "To", "Flags"))
+                f.write("-" * 50 + "\n")
+
+                # Write rules
+                for rule in self.rules:
+                    flags_str = []
+                    if rule.flags & X_AC: flags_str.append("X_AC")
+                    if rule.flags & X_M: flags_str.append("X_M")
+                    if rule.flags & X_F: flags_str.append("X_F")
+                    if rule.flags & X_MM: flags_str.append("X_MM")
+                    if rule.flags & X_MF: flags_str.append("X_MF")
+
+                    f.write("{:<20} {:<10} {:<10}\n".format(
+                        repr(rule.from_str), 
+                        repr(rule.to_str), 
+                        " | ".join(flags_str) or "0"
+                    ))
+
+                print(f"Rules successfully dumped to {filename}")
+        except Exception as e:
+            print(f"Error dumping rules to {filename}: {e}")
+
     def should_process_key(self, keyval, state):
         """
         Check if a key should be processed by the IME

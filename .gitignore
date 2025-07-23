@@ -1,2 +1,5 @@
 /.venv/
 /.idea/
+
+# Debug files
+conversion_rules.txt

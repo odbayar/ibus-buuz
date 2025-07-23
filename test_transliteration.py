@@ -29,6 +29,9 @@ def run_tests():
     # Create a composer instance
     composer = Composer()
     
+    # Dump the rules for debugging
+    composer.dump_rules("conversion_rules.txt")
+
     # Define test cases: (input, expected_output)
     test_cases = [
         # Basic alphabet
