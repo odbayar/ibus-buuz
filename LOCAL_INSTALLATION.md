@@ -24,39 +24,33 @@ The installation process places files in the following locations:
 3. Run the installation script:
    ```
    python3 setup.py install
-   ```
 
-4. Restart IBus to pick up the new component:
-   ```
-   ibus restart
-   ```
-
-5. Enable the Buuz input method in IBus preferences:
+4. Enable the Buuz input method in IBus preferences:
    - Open IBus Preferences
    - Go to the Input Method tab
    - Click the Add button
-   - Select Mongolian from the language list
-   - Select Buuz from the input method list
+   - Select Mongolian (Buuz) from the list
    - Click Add
 
 ## Troubleshooting
 
 If you encounter any issues during installation:
 
-1. Make sure the `~/.local/bin` directory is in your PATH. You can add it by adding the following line to your `~/.bashrc` or `~/.zshrc` file:
-   ```
-   export PATH="$HOME/.local/bin:$PATH"
-   ```
+1. If IBus doesn't detect the new input method after restarting, try restarting your session or computer.
 
-2. If IBus doesn't detect the new input method after restarting, try restarting your session or computer.
-
-3. Check if all required files were copied correctly:
+2. Check if all required files were copied correctly:
    ```
    ls -la ~/.local/bin/ibus-buuz
    ls -la ~/.local/share/ibus-buuz/*.py
    ls -la ~/.local/share/ibus-buuz/icons/buuz.png
    ls -la ~/.local/share/ibus/component/buuz.xml
    ```
+
+3. Check if IBus is properly configured to scan your local component directory:
+   ```
+   echo $IBUS_COMPONENT_PATH
+   ```
+   The output should include `~/.local/share/ibus/component`.
 
 ## Uninstallation
 
