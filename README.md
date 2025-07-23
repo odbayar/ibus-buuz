@@ -18,14 +18,13 @@ This is a port of the [Buuz Windows IME](https://github.com/odbayar/buuz) to the
 On Ubuntu/Debian systems:
 
 ```bash
-sudo apt-get update
-sudo apt-get install python3 python3-pip python3-setuptools python3-gi gir1.2-ibus-1.0 ibus
+sudo apt-get install python3-setuptools
 ```
 
 On Fedora/RHEL systems:
 
 ```bash
-sudo dnf install python3 python3-pip python3-setuptools python3-gobject ibus ibus-devel
+sudo dnf install python3-setuptools
 ```
 
 ### Installing Buuz IBus IME
@@ -33,15 +32,17 @@ sudo dnf install python3 python3-pip python3-setuptools python3-gobject ibus ibu
 1. Clone this repository:
 
 ```bash
-git clone https://github.com/jetbrains/buuz-ibus.git
-cd buuz-ibus
+git clone https://github.com/odbayar/ibus-buuz.git
+cd ibus-buuz
 ```
 
 2. Install the IME:
 
 ```bash
-sudo python3 setup.py install
+python3 setup.py install
 ```
+
+For detailed information about the local installation process, see [LOCAL_INSTALLATION.md](LOCAL_INSTALLATION.md).
 
 3. Restart IBus (if not already done by the installer):
 
@@ -106,8 +107,11 @@ When the Buuz IME is active, you can type Latin characters and they will be auto
 
 If the IME doesn't appear in the IBus preferences:
 - Make sure IBus is running (`ibus-daemon -drx`)
-- Check if the component file was correctly installed (`ls /usr/local/share/ibus/component/buuz.xml`)
+- Check if the component file was correctly installed (`ls ~/.local/share/ibus/component/buuz.xml`)
+- Check if the Python files were correctly installed (`ls ~/.local/share/ibus-buuz/*.py`)
+- Check if the shell script wrapper was created (`ls ~/.local/bin/ibus-buuz`)
 - Try restarting IBus again (`ibus restart`)
+- Make sure `~/.local/bin` is in your PATH
 
 If the IME doesn't work correctly:
 - Check the system logs for any error messages

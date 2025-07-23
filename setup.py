@@ -23,9 +23,11 @@ from setuptools import setup, find_packages
 
 # Define paths
 PACKAGE_NAME = 'ibus-buuz'
-ICON_DIR = '/usr/local/share/ibus-buuz/icons'
-LIB_DIR = '/usr/local/lib/ibus-buuz'
-IBUS_COMPONENT_DIR = '/usr/local/share/ibus/component'
+HOME_DIR = os.path.expanduser('~')
+ICON_DIR = os.path.join(HOME_DIR, '.local/share/ibus-buuz/icons')
+BIN_DIR = os.path.join(HOME_DIR, '.local/bin')
+LIB_DIR = os.path.join(HOME_DIR, '.local/share/ibus-buuz')
+IBUS_COMPONENT_DIR = os.path.join(HOME_DIR, '.local/share/ibus/component')
 
 class CustomInstall:
     """
@@ -33,7 +35,7 @@ class CustomInstall:
     """
     def run(self):
         # Create directories if they don't exist
-        for directory in [ICON_DIR, LIB_DIR]:
+        for directory in [ICON_DIR, BIN_DIR, LIB_DIR, IBUS_COMPONENT_DIR]:
             if not os.path.exists(directory):
                 os.makedirs(directory, exist_ok=True)
         
@@ -57,8 +59,13 @@ class CustomInstall:
         shutil.copy2('ibus-buuz.py', os.path.join(LIB_DIR, 'ibus-buuz.py'))
         print(f"Copied ibus-buuz.py to {LIB_DIR}/ibus-buuz.py")
         
-        # Make the script executable
-        os.chmod(os.path.join(LIB_DIR, 'ibus-buuz.py'), 0o755)
+        # Create shell script wrapper
+        wrapper_path = os.path.join(BIN_DIR, 'ibus-buuz')
+        with open(wrapper_path, 'w') as f:
+            f.write('#!/bin/bash\n')
+            f.write(f'exec python3 {LIB_DIR}/ibus-buuz.py "$@"\n')
+        os.chmod(wrapper_path, 0o755)
+        print(f"Created shell script wrapper at {wrapper_path}")
         
         # Copy icon
         shutil.copy2('icons/buuz.png', os.path.join(ICON_DIR, 'buuz.png'))
@@ -80,12 +87,6 @@ class CustomInstall:
 
 if __name__ == '__main__':
     if len(sys.argv) > 1 and sys.argv[1] == 'install':
-        # Check if running as root
-        if os.geteuid() != 0:
-            print("Error: Installation requires root privileges")
-            print("Please run: sudo python3 setup.py install")
-            sys.exit(1)
-        
         # Run custom installation
         installer = CustomInstall()
         installer.run()
