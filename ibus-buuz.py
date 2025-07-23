@@ -146,6 +146,10 @@ def main():
     """
     Main function
     """
+    # Disable output buffering for debugging
+    sys.stdout = open(sys.stdout.fileno(), mode='w', buffering=1)
+    sys.stderr = open(sys.stderr.fileno(), mode='w', buffering=1)
+
     try:
         locale.setlocale(locale.LC_ALL, "")
     except:
