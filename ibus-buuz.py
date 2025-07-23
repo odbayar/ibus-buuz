@@ -121,7 +121,7 @@ class IMApp:
             "Apache License 2.0",
             "Odbayar Nyamtseren <odbayar.n@gmail.com>",
             os.path.join(current_dir, "icons", "buuz.png"),
-            "mn"
+            "us"
         )
         
         # Add the engine to the component
