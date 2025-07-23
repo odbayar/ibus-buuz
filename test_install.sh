@@ -54,7 +54,7 @@ fi
 
 # Check if buuz.xml references the correct executable
 echo "Checking buuz.xml content..."
-if grep -q "<exec>~/.local/bin/ibus-buuz --ibus</exec>" ~/.local/share/ibus/component/buuz.xml; then
+if grep -q "<exec>$HOME/.local/bin/ibus-buuz --ibus</exec>" ~/.local/share/ibus/component/buuz.xml; then
     echo "✓ buuz.xml references the correct executable"
 else
     echo "✗ buuz.xml references the wrong executable"

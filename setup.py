@@ -71,9 +71,19 @@ class CustomInstall:
         shutil.copy2('icons/buuz.png', os.path.join(ICON_DIR, 'buuz.png'))
         print(f"Copied icons/buuz.png to {ICON_DIR}/buuz.png")
         
-        # Copy component file
-        shutil.copy2('buuz.xml', os.path.join(IBUS_COMPONENT_DIR, 'buuz.xml'))
-        print(f"Copied buuz.xml to {IBUS_COMPONENT_DIR}/buuz.xml")
+        # Copy component file with tilde paths replaced by absolute paths
+        with open('buuz.xml', 'r') as f:
+            content = f.read()
+        
+        # Replace tilde paths with absolute paths
+        content = content.replace('~/', f'{HOME_DIR}/')
+        
+        # Write the modified content to the destination
+        dest_path = os.path.join(IBUS_COMPONENT_DIR, 'buuz.xml')
+        with open(dest_path, 'w') as f:
+            f.write(content)
+        
+        print(f"Copied buuz.xml with absolute paths to {IBUS_COMPONENT_DIR}/buuz.xml")
     
     def _register_with_ibus(self):
         """Register the IME with IBus"""
