@@ -81,15 +81,15 @@ class IMApp:
         factory = IBus.Factory.new(self.bus.get_connection())
         factory.add_engine(BUUZ_ENGINE_NAME, 
                           GObject.type_from_name("BuuzEngine"))
-        
+
+        # Register the component
+        component = self._create_component()
+        self.bus.register_component(component)
+
         if self.exec_by_ibus:
             # If executed by IBus, just exit
             self.bus.request_name(f"org.freedesktop.IBus.{BUUZ_ENGINE_NAME}", 0)
-        else:
-            # If executed standalone, register the component
-            component = self._create_component()
-            self.bus.register_component(component)
-            
+
     def _create_component(self):
         """
         Create an IBus component
