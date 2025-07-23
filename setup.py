@@ -38,13 +38,13 @@ class CustomInstall:
         for directory in [ICON_DIR, BIN_DIR, LIB_DIR, IBUS_COMPONENT_DIR]:
             if not os.path.exists(directory):
                 os.makedirs(directory, exist_ok=True)
-        
+
         # Copy files
         self._copy_files()
-        
+
         # Register with IBus
         self._register_with_ibus()
-    
+
     def _copy_files(self):
         """Copy files to their destinations"""
         # Copy engine files
@@ -54,11 +54,11 @@ class CustomInstall:
             dst = os.path.join(LIB_DIR, file)
             shutil.copy2(src, dst)
             print(f"Copied {src} to {dst}")
-        
+
         # Copy main script
         shutil.copy2('ibus-buuz.py', os.path.join(LIB_DIR, 'ibus-buuz.py'))
         print(f"Copied ibus-buuz.py to {LIB_DIR}/ibus-buuz.py")
-        
+
         # Create shell script wrapper
         wrapper_path = os.path.join(BIN_DIR, 'ibus-buuz')
         with open(wrapper_path, 'w') as f:
@@ -66,25 +66,25 @@ class CustomInstall:
             f.write(f'exec python3 {LIB_DIR}/ibus-buuz.py "$@"\n')
         os.chmod(wrapper_path, 0o755)
         print(f"Created shell script wrapper at {wrapper_path}")
-        
+
         # Copy icon
         shutil.copy2('icons/buuz.png', os.path.join(ICON_DIR, 'buuz.png'))
         print(f"Copied icons/buuz.png to {ICON_DIR}/buuz.png")
-        
+
         # Copy component file with tilde paths replaced by absolute paths
         with open('buuz.xml', 'r') as f:
             content = f.read()
-        
+
         # Replace tilde paths with absolute paths
         content = content.replace('~/', f'{HOME_DIR}/')
-        
+
         # Write the modified content to the destination
         dest_path = os.path.join(IBUS_COMPONENT_DIR, 'buuz.xml')
         with open(dest_path, 'w') as f:
             f.write(content)
-        
+
         print(f"Copied buuz.xml with absolute paths to {IBUS_COMPONENT_DIR}/buuz.xml")
-    
+
     def _register_with_ibus(self):
         """Register the IME with IBus"""
         try:

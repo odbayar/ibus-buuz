@@ -28,7 +28,7 @@ def run_tests():
     """Run a series of tests to verify the transliteration logic"""
     # Create a composer instance
     composer = Composer()
-    
+
     # Dump the rules for debugging
     composer.dump_rules("conversion_rules.txt")
 
@@ -67,52 +67,52 @@ def run_tests():
         ("e", "э"),
         ("yu", "ю"),
         ("ya", "я"),
-        
+
         # Special cases
         ("o'", "ө"),
         ("u'", "ү"),
         ("ii", "ий"),
-        
+
         # Case preservation
         ("A", "А"),
         ("B", "Б"),
         ("V", "В"),
-        
+
         # Mixed case
         ("Buuz", "Бууз"),
-        
+
         # Phrases
         ("buuz id'ye", "бууз идье"),
         ("Mongol hel", "Монгол хэл"),
         ("Ulaanbaatar", "Улаанбаатар"),
-        
+
         # Gender-specific rules
         ("dorj", "дорж"),  # Male name
         ("delgereh", "дэлгэрэх"),  # Female word
     ]
-    
+
     # Run the tests
     passed = 0
     failed = 0
-    
+
     print("Running transliteration tests...")
     print("-" * 50)
-    
+
     for i, (input_text, expected) in enumerate(test_cases, 1):
         result = composer.convert(input_text)
-        
+
         if result == expected:
             status = "PASS"
             passed += 1
         else:
             status = "FAIL"
             failed += 1
-        
+
         print(f"Test {i:2d}: {status} | Input: '{input_text}' | Expected: '{expected}' | Got: '{result}'")
-    
+
     print("-" * 50)
     print(f"Results: {passed} passed, {failed} failed")
-    
+
     return failed == 0
 
 if __name__ == "__main__":

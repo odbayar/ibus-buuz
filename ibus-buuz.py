@@ -42,7 +42,7 @@ class IMApp:
         self.bus = None
         self.engine = None
         self.mainloop = GLib.MainLoop()
-        
+
     def run(self):
         """
         Run the application
@@ -58,10 +58,10 @@ class IMApp:
 
         # Request the bus
         self.bus.request_name(f"org.freedesktop.IBus.Buuz", 0)
-        
+
         # Run the main loop
         self.mainloop.run()
-    
+
     def _bus_disconnected_cb(self, bus):
         """
         Callback for when the bus is disconnected
@@ -71,7 +71,7 @@ class IMApp:
 def print_help(out, v=0):
     """
     Print help message
-    
+
     Args:
         out: The output stream
         v: Verbosity level
@@ -92,18 +92,18 @@ def main():
         locale.setlocale(locale.LC_ALL, "")
     except:
         pass
-    
+
     # Parse command line options
     exec_by_ibus = False
 
     shortopt = "ih"
     longopt = ["ibus", "help"]
-    
+
     try:
         opts, args = getopt.getopt(sys.argv[1:], shortopt, longopt)
     except getopt.GetoptError as err:
         print_help(sys.stderr, 1)
-    
+
     for o, a in opts:
         if o in ("-h", "--help"):
             print_help(sys.stdout)
