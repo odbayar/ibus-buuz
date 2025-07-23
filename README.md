@@ -125,3 +125,4 @@ This project is licensed under the Apache License 2.0 - see the LICENSE.txt file
 ## Acknowledgments
 
 - The IBus team for the IBus framework
+- JetBrains for the awesome editor and AI tools
