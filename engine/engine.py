@@ -48,7 +48,6 @@ class BuuzEngine(IBus.Engine):
     def do_focus_in(self):
         """Called when the engine gains focus"""
         print("do_focus_in")
-        self.set_capabilities(IBus.Capability.ALL)
 
     def do_focus_out(self):
         """Called when the engine loses focus"""
