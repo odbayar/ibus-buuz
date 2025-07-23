@@ -41,7 +41,6 @@ class BuuzEngine(IBus.Engine):
         
         # Composition state
         self.preedit_string = ""
-        self.lookup_table = IBus.LookupTable.new(9, 0, True, True)
         self.is_composing = False
         
         # Connect signals
