@@ -52,27 +52,28 @@ class BuuzEngine(IBus.Engine):
         
         print("BuuzEngine initialized")
 
-    def focus_in(self):
+    def focus_in(self, engine):
         """Called when the engine gains focus"""
         print("focus_in")
         
-    def focus_out(self):
+    def focus_out(self, engine):
         """Called when the engine loses focus"""
         print("focus_out")
-        self.reset()
+        self.reset(engine)
         
-    def reset(self):
+    def reset(self, engine):
         """Reset the engine state"""
         print("reset")
         self.is_composing = False
         self.preedit_string = ""
-        self.update_preedit()
+        self.update_preedit(engine)
         
-    def process_key_event(self, keyval, keycode, state):
+    def process_key_event(self, engine, keyval, keycode, state):
         """
         Process a key event
         
         Args:
+            engien: The engine object
             keyval: The key value
             keycode: The key code
             state: The key state (modifiers)
@@ -96,25 +97,25 @@ class BuuzEngine(IBus.Engine):
             if keyval == IBus.KEY_BackSpace:
                 if self.preedit_string:
                     self.preedit_string = self.preedit_string[:-1]
-                    self.update_preedit()
+                    self.update_preedit(engine)
                     return True
                 return False
                 
             elif keyval == IBus.KEY_space:
                 if self.is_composing:
-                    self.commit_preedit()
+                    self.commit_preedit(engine)
                     return True
                 return False
                 
             elif keyval == IBus.KEY_Return:
                 if self.is_composing:
-                    self.commit_preedit()
+                    self.commit_preedit(engine)
                     return True
                 return False
                 
             elif keyval == IBus.KEY_Escape:
                 if self.is_composing:
-                    self.reset()
+                    self.reset(engine)
                     return True
                 return False
                 
@@ -127,16 +128,16 @@ class BuuzEngine(IBus.Engine):
                 self.preedit_string += char
                 
                 # Update the display
-                self.update_preedit()
+                self.update_preedit(engine)
                 return True
                 
         # If we're composing and a non-handled key is pressed, commit and let it through
         elif self.is_composing:
-            self.commit_preedit()
+            self.commit_preedit(engine)
             
         return False
         
-    def update_preedit(self):
+    def update_preedit(self, engine):
         """Update the preedit text"""
         if self.is_composing:
             # Convert the input text to Mongolian Cyrillic
@@ -159,7 +160,7 @@ class BuuzEngine(IBus.Engine):
             # Clear the preedit text
             self.hide_preedit_text()
             
-    def commit_preedit(self):
+    def commit_preedit(self, engine):
         """Commit the current preedit text"""
         if self.is_composing:
             # Convert the input text to Mongolian Cyrillic
@@ -169,4 +170,4 @@ class BuuzEngine(IBus.Engine):
             self.commit_text(IBus.Text.new_from_string(converted_text))
             
             # Reset the state
-            self.reset()
+            self.reset(engine)
