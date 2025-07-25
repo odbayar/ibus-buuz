@@ -15,8 +15,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import sys
-import os
 import gi
 gi.require_version('IBus', '1.0')
 from gi.repository import IBus, GLib, GObject
