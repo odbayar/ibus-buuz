@@ -72,11 +72,11 @@ class CustomInstall:
         print(f"Copied icons/buuz.png to {ICON_DIR}/buuz.png")
 
         # Copy component file with tilde paths replaced by absolute paths
-        with open('buuz.xml', 'r') as f:
+        with open('buuz.xml.in', 'r') as f:
             content = f.read()
 
         # Replace tilde paths with absolute paths
-        content = content.replace('~/', f'{HOME_DIR}/')
+        content = content.replace('$HOME', HOME_DIR)
 
         # Write the modified content to the destination
         dest_path = os.path.join(IBUS_COMPONENT_DIR, 'buuz.xml')
