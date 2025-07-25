@@ -17,7 +17,7 @@
 
 import gi
 gi.require_version('IBus', '1.0')
-from gi.repository import IBus, GLib, GObject
+from gi.repository import IBus
 
 # Import our custom modules
 from composer import Composer
