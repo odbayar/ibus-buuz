@@ -48,7 +48,7 @@ class CustomInstall:
     def _copy_files(self):
         """Copy files to their destinations"""
         # Copy engine files
-        engine_files = ['engine.py', 'composer.py']
+        engine_files = ['engine.py', 'composer.py', 'utils.py']
         for file in engine_files:
             src = os.path.join('engine', file)
             dst = os.path.join(LIB_DIR, file)

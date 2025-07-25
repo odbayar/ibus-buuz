@@ -21,6 +21,7 @@ from gi.repository import IBus, GLib, GObject
 
 # Import our custom modules
 from composer import Composer
+from utils import debug_print
 
 # Maximum composition length
 MAX_COMP_LENGTH = 50
@@ -41,20 +42,20 @@ class BuuzEngine(IBus.Engine):
         self.preedit_string = ""
         self.is_composing = False
 
-        print("BuuzEngine initialized")
+        debug_print("BuuzEngine initialized")
 
     def do_focus_in(self):
         """Called when the engine gains focus"""
-        print("do_focus_in")
+        debug_print("do_focus_in")
 
     def do_focus_out(self):
         """Called when the engine loses focus"""
-        print("do_focus_out")
+        debug_print("do_focus_out")
         self.commit_preedit()
 
     def do_reset(self):
         """Reset the engine state"""
-        print("do_reset")
+        debug_print("do_reset")
         self._reset_state()
 
     def _reset_state(self):
@@ -74,7 +75,7 @@ class BuuzEngine(IBus.Engine):
         Returns:
             True if the key was handled, False otherwise
         """
-        print(f"do_process_key_event(keyval={keyval}, keycode={keycode}, state={state})")
+        debug_print(f"do_process_key_event(keyval={keyval}, keycode={keycode}, state={state})")
 
         # Ignore key release events
         if state & IBus.ModifierType.RELEASE_MASK:

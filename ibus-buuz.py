@@ -27,8 +27,9 @@ import gi
 gi.require_version('IBus', '1.0')
 from gi.repository import IBus, GLib, GObject
 
-# Import our engine
+# Import our engine and utilities
 from engine import BuuzEngine
+import utils
 
 # Define constants
 BUUZ_ENGINE_PATH = "/org/freedesktop/IBus/Buuz/Engine/"
@@ -77,6 +78,7 @@ def print_help(out, v=0):
         v: Verbosity level
     """
     print("-i, --ibus             executed by IBus", file=out)
+    print("-v, --verbose          enable verbose debug output", file=out)
     print("-h, --help             show this help message", file=out)
     sys.exit(v)
 
@@ -96,8 +98,8 @@ def main():
     # Parse command line options
     exec_by_ibus = False
 
-    shortopt = "ih"
-    longopt = ["ibus", "help"]
+    shortopt = "ivh"
+    longopt = ["ibus", "verbose", "help"]
 
     try:
         opts, args = getopt.getopt(sys.argv[1:], shortopt, longopt)
@@ -109,6 +111,8 @@ def main():
             print_help(sys.stdout)
         elif o in ("-i", "--ibus"):
             exec_by_ibus = True
+        elif o in ("-v", "--verbose"):
+            utils.VERBOSE_MODE = True
         else:
             print("Unknown argument: %s\n" % o, file=sys.stderr)
             print_help(sys.stderr, 1)

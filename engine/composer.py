@@ -17,6 +17,7 @@
 
 import re
 import unicodedata
+from utils import debug_print
 
 # Conversion rule flags
 X_AC = 0x0001  # allow case conversion
@@ -233,9 +234,9 @@ class Composer:
                         " | ".join(flags_str) or "0"
                     ))
 
-                print(f"Rules successfully dumped to {filename}")
+                debug_print(f"Rules successfully dumped to {filename}")
         except Exception as e:
-            print(f"Error dumping rules to {filename}: {e}")
+            debug_print(f"Error dumping rules to {filename}: {e}")
 
     def should_process_key(self, keyval):
         """
