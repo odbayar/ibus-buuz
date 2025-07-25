@@ -52,7 +52,7 @@ class BuuzEngine(IBus.Engine):
     def do_focus_out(self):
         """Called when the engine loses focus"""
         print("do_focus_out")
-        self._reset_state()
+        self.commit_preedit()
 
     def do_reset(self):
         """Reset the engine state"""
