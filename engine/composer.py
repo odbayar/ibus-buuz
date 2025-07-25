@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # Copyright 2009-2025 Odbayar Nyamtseren <odbayar.n@gmail.com>
