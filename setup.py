@@ -104,7 +104,7 @@ if __name__ == '__main__':
         # Setup package metadata
         setup(
             name=PACKAGE_NAME,
-            version='0.1.0',
+            version='1.0',
             description='Buuz - Mongolian Cyrillic Input Method',
             author='Odbayar Nyamtseren',
             author_email='odbayar.n@gmail.com',
@@ -112,7 +112,7 @@ if __name__ == '__main__':
             packages=find_packages(),
             classifiers=[
                 'Private :: Do Not Upload',
-                'Development Status :: 4 - Beta',
+                'Development Status :: 5 - Production/Stable',
                 'Intended Audience :: End Users/Desktop',
                 'License :: OSI Approved :: Apache Software License',
                 'Operating System :: POSIX :: Linux',

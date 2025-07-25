@@ -3,7 +3,7 @@
   <name>org.freedesktop.IBus.Buuz</name>
   <description>Buuz - Mongolian Cyrillic Input Method</description>
   <exec>$HOME/.local/bin/ibus-buuz --ibus</exec>
-  <version>0.1.0</version>
+  <version>1.0</version>
   <author>Odbayar Nyamtseren &lt;odbayar.n@gmail.com&gt;</author>
   <license>Apache License 2.0</license>
   <homepage>https://github.com/odbayar/ibus-buuz</homepage>
