@@ -237,13 +237,12 @@ class Composer:
         except Exception as e:
             print(f"Error dumping rules to {filename}: {e}")
 
-    def should_process_key(self, keyval, state):
+    def should_process_key(self, keyval):
         """
         Check if a key should be processed by the IME
 
         Args:
             keyval: The key value
-            state: The key state (modifiers)
 
         Returns:
             True if the key should be processed, False otherwise

@@ -80,49 +80,34 @@ class BuuzEngine(IBus.Engine):
         if state & IBus.ModifierType.RELEASE_MASK:
             return False
 
-        # Check if the key should be handled by the IME
-        if self.composer.should_process_key(keyval, state):
+        # Handle special keys
+        if keyval == IBus.KEY_BackSpace:
+            if self.preedit_string:
+                self.preedit_string = self.preedit_string[:-1]
+                self.update_preedit()
+                return True
+            return False
+
+        # Ignore shift and caps lock keys
+        elif keyval in (IBus.KEY_Shift_L, IBus.KEY_Shift_R, IBus.KEY_Caps_Lock):
+            return False
+
+        # Handle regular input
+        elif (len(self.preedit_string) < MAX_COMP_LENGTH and self.composer.should_process_key(keyval) and
+              state & ~IBus.ModifierType.SHIFT_MASK == 0):
             # If we're not composing yet, start composition
             if not self.is_composing:
                 self.is_composing = True
 
-            # Handle special keys
-            if keyval == IBus.KEY_BackSpace:
-                if self.preedit_string:
-                    self.preedit_string = self.preedit_string[:-1]
-                    self.update_preedit()
-                    return True
-                return False
+            # Convert keyval to character
+            char = chr(keyval)
 
-            elif keyval == IBus.KEY_space:
-                if self.is_composing:
-                    self.commit_preedit()
-                    return True
-                return False
+            # Add to preedit string
+            self.preedit_string += char
 
-            elif keyval == IBus.KEY_Return:
-                if self.is_composing:
-                    self.commit_preedit()
-                    return True
-                return False
-
-            elif keyval == IBus.KEY_Escape:
-                if self.is_composing:
-                    self._reset_state()
-                    return True
-                return False
-
-            # Handle regular input
-            elif len(self.preedit_string) < MAX_COMP_LENGTH:
-                # Convert keyval to character
-                char = chr(keyval)
-
-                # Add to preedit string
-                self.preedit_string += char
-
-                # Update the display
-                self.update_preedit()
-                return True
+            # Update the display
+            self.update_preedit()
+            return True
 
         # If we're composing and a non-handled key is pressed, commit and let it through
         elif self.is_composing:
