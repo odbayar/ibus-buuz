@@ -105,19 +105,17 @@ if __name__ == '__main__':
         setup(
             name=PACKAGE_NAME,
             version='0.1.0',
-            description='Buuz Mongolian Input Method for IBus',
+            description='Buuz - Mongolian Cyrillic Input Method',
             author='Odbayar Nyamtseren',
             author_email='odbayar.n@gmail.com',
             url='https://github.com/odbayar/ibus-buuz',
             packages=find_packages(),
             classifiers=[
+                'Private :: Do Not Upload',
                 'Development Status :: 4 - Beta',
-                'Environment :: X11 Applications :: GTK',
                 'Intended Audience :: End Users/Desktop',
                 'License :: OSI Approved :: Apache Software License',
                 'Operating System :: POSIX :: Linux',
                 'Programming Language :: Python :: 3',
-                'Topic :: Software Development :: Libraries :: Python Modules',
-                'Topic :: System :: Input/Output',
             ],
         )
