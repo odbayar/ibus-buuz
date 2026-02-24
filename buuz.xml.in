@@ -2,7 +2,7 @@
 <component>
   <name>org.freedesktop.IBus.Buuz</name>
   <description>Buuz - Mongolian Cyrillic Input Method</description>
-  <exec>$HOME/.local/bin/ibus-buuz --ibus</exec>
+  <exec>$EXEC_PATH --ibus</exec>
   <version>1.0</version>
   <author>Odbayar Nyamtseren &lt;odbayar.n@gmail.com&gt;</author>
   <license>Apache License 2.0</license>
@@ -15,7 +15,7 @@
       <language>mn</language>
       <license>Apache License 2.0</license>
       <author>Odbayar Nyamtseren &lt;odbayar.n@gmail.com&gt;</author>
-      <icon>$HOME/.local/share/ibus-buuz/icons/buuz.png</icon>
+      <icon>$ICON_PATH</icon>
       <layout>us</layout>
       <longname>Buuz</longname>
       <description>Buuz - Mongolian Cyrillic Input Method</description>

@@ -29,14 +29,26 @@ sudo dnf install python3-setuptools
 
 ### Installing Buuz IBus IME
 
-The installation process places files in the following locations:
+`setup.py` supports two install modes:
+
+- User install (default, current user only)
+- System install (`--system`, available to all users)
+
+User install places files in:
 
 - `~/.local/bin/ibus-buuz` - Shell script wrapper that launches the Python application
 - `~/.local/share/ibus-buuz/*.py` - Python application files
 - `~/.local/share/ibus-buuz/icons/buuz.png` - Icon file
 - `~/.local/share/ibus/component/buuz.xml` - IBus component file
 
-Follow these steps to install:
+System install places files in:
+
+- `/usr/local/bin/ibus-buuz` - Shell script wrapper that launches the Python application
+- `/usr/local/share/ibus-buuz/*.py` - Python application files
+- `/usr/local/share/ibus-buuz/icons/buuz.png` - Icon file
+- `/usr/share/ibus/component/buuz.xml` - IBus component file for all users
+
+Follow these steps to install for your user:
 
 1. Clone this repository:
 
@@ -51,11 +63,19 @@ cd ibus-buuz
 python3 setup.py install
 ```
 
+To install for all users (system-wide), run:
+
+```bash
+sudo python3 setup.py install --system
+```
+
 3. Restart IBus (if not already done by the installer):
 
 ```bash
 ibus restart
 ```
+
+For `--system` installs, this restart must be run in each user's session.
 
 4. Enable the IME in IBus preferences:
    - Open IBus Preferences (from system settings or run `ibus-setup`)
@@ -114,15 +134,21 @@ When the Buuz IME is active, you can type Latin characters and they will be auto
 
 If the IME doesn't appear in the IBus preferences:
 - Make sure IBus is running (`ibus start`)
-- Check if the component file was correctly installed (`ls ~/.local/share/ibus/component/buuz.xml`)
-- Check if the Python files were correctly installed (`ls ~/.local/share/ibus-buuz/*.py`)
-- Check if the shell script wrapper was created (`ls ~/.local/bin/ibus-buuz`)
+- Check if the component file was correctly installed:
+  - User install: `ls ~/.local/share/ibus/component/buuz.xml`
+  - System install: `ls /usr/share/ibus/component/buuz.xml`
+- Check if the Python files were correctly installed:
+  - User install: `ls ~/.local/share/ibus-buuz/*.py`
+  - System install: `ls /usr/local/share/ibus-buuz/*.py`
+- Check if the shell script wrapper was created:
+  - User install: `ls ~/.local/bin/ibus-buuz`
+  - System install: `ls /usr/local/bin/ibus-buuz`
 - Try restarting IBus again (`ibus restart`)
-- Check if IBus is properly configured to scan your local component directory:
+- Check if IBus is properly configured to scan the expected component directory:
   ```bash
   echo $IBUS_COMPONENT_PATH
   ```
-  The output should include `~/.local/share/ibus/component`.
+  For user install, the output should include `~/.local/share/ibus/component`.
 
 If the IME doesn't work correctly:
 - Check the system logs for any error messages
@@ -136,6 +162,14 @@ To uninstall ibus-buuz, simply remove the installed files:
 rm -f ~/.local/bin/ibus-buuz
 rm -rf ~/.local/share/ibus-buuz
 rm -f ~/.local/share/ibus/component/buuz.xml
+ibus restart
+```
+
+For system-wide uninstall:
+```bash
+sudo rm -f /usr/local/bin/ibus-buuz
+sudo rm -rf /usr/local/share/ibus-buuz
+sudo rm -f /usr/share/ibus/component/buuz.xml
 ibus restart
 ```
 
