@@ -25,6 +25,15 @@ from utils import debug_print
 # Maximum composition length
 MAX_COMP_LENGTH = 50
 
+# Modifiers that turn a key press into a shortcut. Lock modifiers such as
+# Caps Lock (LOCK_MASK) and NumLock (MOD2_MASK) are deliberately left out.
+SHORTCUT_MASK = (IBus.ModifierType.CONTROL_MASK |
+                 IBus.ModifierType.MOD1_MASK |
+                 IBus.ModifierType.MOD4_MASK |
+                 IBus.ModifierType.SUPER_MASK |
+                 IBus.ModifierType.HYPER_MASK |
+                 IBus.ModifierType.META_MASK)
+
 class BuuzEngine(IBus.Engine):
     """
     IBus Engine for Mongolian Cyrillic input
@@ -50,11 +59,13 @@ class BuuzEngine(IBus.Engine):
     def do_focus_out(self):
         """Called when the engine loses focus"""
         debug_print("do_focus_out")
-        self.commit_preedit()
+        # IBus has already committed the preedit text (see update_preedit)
+        self._reset_state()
 
     def do_reset(self):
         """Reset the engine state"""
         debug_print("do_reset")
+        # IBus has already committed the preedit text (see update_preedit)
         self._reset_state()
 
     def _reset_state(self):
@@ -93,8 +104,11 @@ class BuuzEngine(IBus.Engine):
             return False
 
         # Handle regular input
-        elif (len(self.preedit_string) < MAX_COMP_LENGTH and self.composer.should_process_key(keyval) and
-              state & ~IBus.ModifierType.SHIFT_MASK == 0):
+        elif self.composer.should_process_key(keyval) and not state & SHORTCUT_MASK:
+            # If the composition is full, commit it and start a new one
+            if len(self.preedit_string) >= MAX_COMP_LENGTH:
+                self.commit_preedit()
+
             # If we're not composing yet, start composition
             if not self.is_composing:
                 self.is_composing = True
@@ -132,8 +146,11 @@ class BuuzEngine(IBus.Engine):
                                                IBus.AttrUnderline.SINGLE, 0, length))
             text.set_attributes(attrs)
 
-            # Update the preedit text
-            self.update_preedit_text(text, length, length > 0)
+            # Update the preedit text. In COMMIT mode IBus commits the preedit
+            # text itself on focus out and reset, so the word being typed is
+            # neither lost nor sent to another window.
+            self.update_preedit_text_with_mode(text, length, length > 0,
+                                               IBus.PreeditFocusMode.COMMIT)
         else:
             # Clear the preedit text
             self.hide_preedit_text()
