@@ -17,13 +17,18 @@
 
 import os
 import sys
+import shlex
 import shutil
 import subprocess
+from xml.sax.saxutils import escape
 from setuptools import setup, find_packages
 
 # Define paths
 PACKAGE_NAME = 'ibus-buuz'
 HOME_DIR = os.path.expanduser('~')
+SRC_DIR = os.path.dirname(os.path.abspath(__file__))
+# IBus reads components from here unless IBUS_COMPONENT_PATH is set
+SYSTEM_COMPONENT_DIR = '/usr/share/ibus/component'
 
 
 def get_install_paths(mode):
@@ -32,8 +37,7 @@ def get_install_paths(mode):
             'icon_dir': '/usr/local/share/ibus-buuz/icons',
             'bin_dir': '/usr/local/bin',
             'lib_dir': '/usr/local/share/ibus-buuz',
-            # IBus scans /usr/share/ibus/component on typical distro packages.
-            'component_dir': '/usr/share/ibus/component',
+            'component_dir': SYSTEM_COMPONENT_DIR,
         }
 
     return {
@@ -91,35 +95,36 @@ class CustomInstall:
         # Copy engine files
         engine_files = ['engine.py', 'composer.py', 'utils.py']
         for file in engine_files:
-            src = os.path.join('engine', file)
+            src = os.path.join(SRC_DIR, 'engine', file)
             dst = os.path.join(self.paths['lib_dir'], file)
             shutil.copy2(src, dst)
             print(f"Copied {src} to {dst}")
 
         # Copy main script
-        shutil.copy2('ibus-buuz.py', os.path.join(self.paths['lib_dir'], 'ibus-buuz.py'))
-        print(f"Copied ibus-buuz.py to {self.paths['lib_dir']}/ibus-buuz.py")
+        script_path = os.path.join(self.paths['lib_dir'], 'ibus-buuz.py')
+        shutil.copy2(os.path.join(SRC_DIR, 'ibus-buuz.py'), script_path)
+        print(f"Copied ibus-buuz.py to {script_path}")
 
         # Create shell script wrapper
         wrapper_path = os.path.join(self.paths['bin_dir'], 'ibus-buuz')
         with open(wrapper_path, 'w') as f:
             f.write('#!/bin/bash\n')
-            f.write(f'exec python3 {self.paths["lib_dir"]}/ibus-buuz.py "$@"\n')
+            f.write(f'exec python3 {shlex.quote(script_path)} "$@"\n')
         os.chmod(wrapper_path, 0o755)
         print(f"Created shell script wrapper at {wrapper_path}")
 
         # Copy icon
-        shutil.copy2('icons/buuz.png', os.path.join(self.paths['icon_dir'], 'buuz.png'))
-        print(f"Copied icons/buuz.png to {self.paths['icon_dir']}/buuz.png")
+        icon_path = os.path.join(self.paths['icon_dir'], 'buuz.png')
+        shutil.copy2(os.path.join(SRC_DIR, 'icons', 'buuz.png'), icon_path)
+        print(f"Copied icons/buuz.png to {icon_path}")
 
         # Copy component file with absolute executable/icon paths.
-        with open('buuz.xml.in', 'r') as f:
+        with open(os.path.join(SRC_DIR, 'buuz.xml.in'), 'r') as f:
             content = f.read()
 
-        exec_path = os.path.join(self.paths['bin_dir'], 'ibus-buuz')
-        icon_path = os.path.join(self.paths['icon_dir'], 'buuz.png')
-        content = content.replace('$EXEC_PATH', exec_path)
-        content = content.replace('$ICON_PATH', icon_path)
+        # IBus splits <exec> like a shell command line, so quote the path
+        content = content.replace('$EXEC_PATH', escape(shlex.quote(wrapper_path)))
+        content = content.replace('$ICON_PATH', escape(icon_path))
 
         # Write the modified content to the destination
         dest_path = os.path.join(self.paths['component_dir'], 'buuz.xml')
@@ -136,6 +141,20 @@ class CustomInstall:
             print("  ibus restart")
             return
 
+        # IBus ignores the user component directory unless it is listed in
+        # IBUS_COMPONENT_PATH, which replaces the system directory entirely.
+        component_path = os.environ.get('IBUS_COMPONENT_PATH', '').split(os.pathsep)
+        if self.paths['component_dir'] not in component_path:
+            print()
+            print("Warning: IBus will not find Buuz yet. IBus only loads components from")
+            print(f"{SYSTEM_COMPONENT_DIR} unless IBUS_COMPONENT_PATH says otherwise.")
+            print("To use this user install, add this line to")
+            print("~/.config/environment.d/ibus.conf, then log out and back in:")
+            print(f"  IBUS_COMPONENT_PATH={SYSTEM_COMPONENT_DIR}:{self.paths['component_dir']}")
+            print("Or install for all users instead:")
+            print("  sudo python3 setup.py install --system")
+            print()
+
         try:
             # Restart IBus to pick up the new component
             subprocess.run(['ibus', 'restart'], check=True)
@@ -145,11 +164,21 @@ class CustomInstall:
             print("You can use: ibus restart")
 
 if __name__ == '__main__':
-    if len(sys.argv) > 1 and sys.argv[1] == 'install':
-        install_mode = 'user'
-        if '--system' in sys.argv:
-            install_mode = 'system'
-            sys.argv.remove('--system')
+    if 'install' in sys.argv[1:]:
+        options = [arg for arg in sys.argv[1:] if arg != 'install']
+        unknown = [arg for arg in options if arg != '--system']
+        if unknown:
+            print(f"Unknown option(s): {' '.join(unknown)}")
+            print("Usage: python3 setup.py install [--system]")
+            sys.exit(2)
+        install_mode = 'system' if '--system' in options else 'user'
+
+        # Under sudo, a user install would land in root's home directory
+        if install_mode == 'user' and os.geteuid() == 0:
+            print("Refusing to do a user install as root.")
+            print("To install for all users, run:")
+            print("  sudo python3 setup.py install --system")
+            sys.exit(1)
 
         # Run custom installation
         installer = CustomInstall(mode=install_mode)

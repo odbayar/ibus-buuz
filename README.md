@@ -31,8 +31,8 @@ sudo dnf install python3-setuptools
 
 `setup.py` supports two install modes:
 
-- User install (default, current user only)
-- System install (`--system`, available to all users)
+- System install (`--system`, available to all users) - recommended
+- User install (default, current user only) - needs extra IBus setup, see below
 
 User install places files in:
 
@@ -48,7 +48,7 @@ System install places files in:
 - `/usr/local/share/ibus-buuz/icons/buuz.png` - Icon file
 - `/usr/share/ibus/component/buuz.xml` - IBus component file for all users
 
-Follow these steps to install for your user:
+Follow these steps to install:
 
 1. Clone this repository:
 
@@ -57,16 +57,26 @@ git clone https://github.com/odbayar/ibus-buuz.git
 cd ibus-buuz
 ```
 
-2. Install the IME:
+2. Install the IME for all users:
+
+```bash
+sudo python3 setup.py install --system
+```
+
+Or install it for your user only:
 
 ```bash
 python3 setup.py install
 ```
 
-To install for all users (system-wide), run:
+IBus does not look in `~/.local/share/ibus/component` by default, so a user
+install also needs `IBUS_COMPONENT_PATH` set in your session. Setting it
+replaces the default directory, so list both. Add this line to
+`~/.config/environment.d/ibus.conf` (with your home directory spelled out),
+then log out and back in:
 
-```bash
-sudo python3 setup.py install --system
+```
+IBUS_COMPONENT_PATH=/usr/share/ibus/component:/home/you/.local/share/ibus/component
 ```
 
 3. Restart IBus (if not already done by the installer):
@@ -144,11 +154,12 @@ If the IME doesn't appear in the IBus preferences:
   - User install: `ls ~/.local/bin/ibus-buuz`
   - System install: `ls /usr/local/bin/ibus-buuz`
 - Try restarting IBus again (`ibus restart`)
-- Check if IBus is properly configured to scan the expected component directory:
+- For a user install, check that IBus is configured to scan the user component directory:
   ```bash
   echo $IBUS_COMPONENT_PATH
   ```
-  For user install, the output should include `~/.local/share/ibus/component`.
+  The output should include both `/usr/share/ibus/component` and
+  `~/.local/share/ibus/component` (see step 2 of the installation).
 
 If the IME doesn't work correctly:
 - Check the system logs for any error messages
